@@ -1,0 +1,14 @@
+pipelines:
+  custom:
+    customPipelineWithRunnerStep:
+      - step:
+          name: Checkout sequifi-qa repository
+          runs-on: windows
+          script:
+            - New-Item -ItemType Directory -Path "C:\inetpub\autotest\$env:BITBUCKET_BUILD_NUMBER" -Force
+            - Set-Location -Path "C:\inetpub\autotest\$env:BITBUCKET_BUILD_NUMBER"
+            - git clone https://x-token-auth:ATCTT3xFfGN0_9t1_55guM9KVQsB4Zppaxdhu0keaoGioFKCNCOQVpeN3LUo9VDzjfWHLj3_w8nYugNTVO50j7RQpAOpPr1-rmDJjj5stqrcy4s0iZ8hRo5Ksf9kBDyQnHRrp4akxNx7PPlAfj7TJSpOruLn9PN5p3vh_OCzRcuEJ-1pq2HHWKo=820DAA5B@bitbucket.org/sequifi/sequifi-qa.git "C:\inetpub\autotest\$env:BITBUCKET_BUILD_NUMBER"
+            - mvn clean test -D"cucumber.options"="--tags @ResetApp"
+            - mvn clean test -D"cucumber.options"="--tags @Regression"
+            - Remove-Item -Path "C:\inetpub\wwwroot\autotest\*" -Recurse -Force
+            - Copy-Item -Path "C:\inetpub\autotest\$env:BITBUCKET_BUILD_NUMBER\target\cucumber-html-reports\*" -Destination "C:\inetpub\wwwroot\autotest" -Recurse -Force
